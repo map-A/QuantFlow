@@ -69,7 +69,7 @@ const TradeDetailDrawer: React.FC<TradeDetailDrawerProps> = ({
             <DrawerMetric 
               label="执行标的" 
               value={`${trade.name} (${trade.symbol})`}
-              icon={<Icons.TrendingUp className="w-4 h-4 text-violet" />}
+              icon={<Icons.Up className="w-4 h-4 text-violet" />}
             />
             <DrawerMetric 
               label="策略模型" 
