@@ -48,7 +48,7 @@ const TradeDetailDrawer: React.FC<TradeDetailDrawerProps> = ({
           onClick={onClose} 
           className="p-1.5 hover:bg-white/10 rounded-lg transition-colors"
         >
-          <Icons.X className="w-5 h-5" />
+          <Icons.XCircle className="w-6 h-6 text-text-muted" />
         </button>
       </div>
 
@@ -63,18 +63,18 @@ const TradeDetailDrawer: React.FC<TradeDetailDrawerProps> = ({
             <DrawerMetric 
               label="执行时刻" 
               value={trade.time}
-              icon={<Icons.Clock className="w-4 h-4 text-cyan" />}
+              icon={<Icons.Activity className="w-4 h-4 text-cyan" />}
               color="text-cyan"
             />
             <DrawerMetric 
               label="执行标的" 
               value={`${trade.name} (${trade.symbol})`}
-              icon={<Icons.Layers className="w-4 h-4 text-violet" />}
+              icon={<Icons.TrendingUp className="w-4 h-4 text-violet" />}
             />
             <DrawerMetric 
               label="策略模型" 
               value={`${trade.strategyName} ${trade.strategyVersion}`}
-              icon={<Icons.Cpu className="w-4 h-4 text-yellow-500" />}
+              icon={<Icons.Target className="w-4 h-4 text-yellow-500" />}
             />
           </div>
         </section>
@@ -118,9 +118,9 @@ const TradeDetailDrawer: React.FC<TradeDetailDrawerProps> = ({
 
         {/* AI Review */}
         <section className="p-5 bg-violet/5 border border-violet/20 rounded-2xl relative overflow-hidden group">
-          <Icons.Robot className="absolute -right-6 -bottom-6 w-32 h-32 text-violet opacity-10 group-hover:scale-110 transition-transform duration-700" />
+          <Icons.AI className="absolute -right-6 -bottom-6 w-32 h-32 text-violet opacity-10 group-hover:scale-110 transition-transform duration-700" />
           <div className="flex items-center gap-2 text-violet font-bold text-xs uppercase tracking-widest mb-3">
-            <Icons.Sparkles className="w-4 h-4 animate-pulse" /> AI 投后审计报告
+            <Icons.Zap className="w-4 h-4 animate-pulse" /> AI 投后审计报告
           </div>
           <p className="text-sm text-text-main leading-relaxed relative z-10 italic">
             "该笔交易发生在市场情绪 <span className="text-cyan">修复期</span>。策略模型捕捉到了 <span className="text-white font-bold">2.41 因子</span> 的异常共振信号。
