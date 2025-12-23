@@ -92,7 +92,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       {/* Compliance Panel */}
       <div className="mt-auto pt-6 border-t border-border">
         <div className="flex items-center gap-2 mb-3">
-          <Icons.Shield className="w-4 h-4 text-cyan" />
+          <Icons.CheckCircle className="w-4 h-4 text-cyan" />
           <h3 className="text-[9px] font-bold text-text-muted uppercase tracking-widest">
             算法合规自检
           </h3>
