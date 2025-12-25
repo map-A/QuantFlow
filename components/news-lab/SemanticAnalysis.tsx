@@ -5,10 +5,20 @@ import { Section } from './Section';
 import { SentimentGauge } from './SentimentGauge';
 
 interface SemanticAnalysisProps {
-  selectedNews: NewsFeedItem;
+  selectedNews: NewsFeedItem | null;
 }
 
 export const SemanticAnalysis: React.FC<SemanticAnalysisProps> = ({ selectedNews }) => {
+  if (!selectedNews) {
+    return (
+      <Section title="语义与情绪分解" icon={Icons.AI} className="col-span-7">
+        <div className="text-center text-text-muted text-sm py-6">
+          请选择一条新闻查看详细分析
+        </div>
+      </Section>
+    );
+  }
+
   return (
     <Section title="语义与情绪分解" icon={Icons.AI} className="col-span-7">
       <div className="flex gap-6 items-center">

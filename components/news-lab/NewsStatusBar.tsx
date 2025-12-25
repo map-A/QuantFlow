@@ -6,13 +6,17 @@ interface NewsStatusBarProps {
   newsRegime?: string;
   processedCount?: number;
   engineStatus?: 'online' | 'offline';
+  newsCount?: number;
+  isConnected?: boolean;
 }
 
 export const NewsStatusBar: React.FC<NewsStatusBarProps> = ({
   processingDelay = '14ms',
   newsRegime = 'POSITIVE RECOVERY',
   processedCount = 14285,
-  engineStatus = 'online'
+  engineStatus = 'online',
+  newsCount = 0,
+  isConnected = false
 }) => {
   const regimeProgress = newsRegime.includes('POSITIVE') ? 80 : 
                         newsRegime.includes('NEGATIVE') ? 20 : 50;
@@ -44,8 +48,15 @@ export const NewsStatusBar: React.FC<NewsStatusBarProps> = ({
       </div>
       <div className="flex items-center gap-6">
         <span className="text-text-muted">
-          Processed: <span className="text-white font-mono font-bold">{processedCount.toLocaleString()} News/Day</span>
+          Loaded: <span className="text-white font-mono font-bold">{newsCount}</span> News
         </span>
+        <div className="w-[1px] h-3 bg-border" />
+        <div className="flex items-center gap-2">
+          <div className={`w-2 h-2 rounded-full ${isConnected ? 'bg-success animate-pulse' : 'bg-danger'}`} />
+          <span className={isConnected ? 'text-success' : 'text-danger'}>
+            {isConnected ? 'Live Connected' : 'Disconnected'}
+          </span>
+        </div>
         <div className="flex items-center gap-2">
           <Icons.CheckCircle className={`w-3 h-3 ${engineStatus === 'online' ? 'text-success' : 'text-danger'}`} />
           <span className={engineStatus === 'online' ? 'text-success' : 'text-danger'}>

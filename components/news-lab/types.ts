@@ -2,7 +2,9 @@ export interface NewsFeedItem {
   id: string;
   time: string;
   title: string;
+  content?: string;
   source: string;
+  author?: string; // 新增：作者字段
   sourceLevel: 'A' | 'B' | 'C';
   sentiment: 'positive' | 'negative' | 'neutral';
   strength: number; // 0-100

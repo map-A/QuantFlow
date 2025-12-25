@@ -4,7 +4,7 @@ import { NewsFeedItem } from './types';
 import { Section } from './Section';
 
 interface ImpactScopeProps {
-  selectedNews: NewsFeedItem;
+  selectedNews: NewsFeedItem | null;
   relatedStocks?: string[];
 }
 
@@ -12,6 +12,16 @@ export const ImpactScope: React.FC<ImpactScopeProps> = ({
   selectedNews,
   relatedStocks = ['万科A', '保利发展', '金地集团']
 }) => {
+  if (!selectedNews) {
+    return (
+      <Section title="影响半径与传导" icon={Icons.Crosshair} className="col-span-5">
+        <div className="text-center text-text-muted text-sm py-6">
+          请选择新闻
+        </div>
+      </Section>
+    );
+  }
+
   return (
     <Section title="影响半径与传导" icon={Icons.Crosshair} className="col-span-5">
       <div className="space-y-3">

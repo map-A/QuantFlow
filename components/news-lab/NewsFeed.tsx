@@ -5,11 +5,21 @@ import { Section } from './Section';
 
 interface NewsFeedProps {
   news: NewsFeedItem[];
-  selectedNews: NewsFeedItem;
+  selectedNews: NewsFeedItem | null;
   onSelectNews: (news: NewsFeedItem) => void;
 }
 
 export const NewsFeed: React.FC<NewsFeedProps> = ({ news, selectedNews, onSelectNews }) => {
+  if (news.length === 0) {
+    return (
+      <Section title="全维新闻流 (Live Stream)" icon={Icons.News} noPadding>
+        <div className="p-6 text-center text-text-muted text-sm">
+          正在加载新闻...
+        </div>
+      </Section>
+    );
+  }
+
   return (
     <Section title="全维新闻流 (Live Stream)" icon={Icons.News} noPadding>
       <div className="space-y-3 p-1">
@@ -18,7 +28,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({ news, selectedNews, onSelect
             key={item.id} 
             onClick={() => onSelectNews(item)}
             className={`p-3 rounded-xl border transition-all cursor-pointer relative overflow-hidden group 
-              ${selectedNews.id === item.id ? 'bg-primary/5 border-primary/40 shadow-glow-blue' : 'bg-surface/30 border-border/30 hover:border-white/20'}
+              ${selectedNews?.id === item.id ? 'bg-primary/5 border-primary/40 shadow-glow-blue' : 'bg-surface/30 border-border/30 hover:border-white/20'}
               ${item.isBreaking ? 'border-danger/40 bg-danger/5 shadow-[0_0_15px_rgba(246,70,93,0.1)]' : ''}
             `}
           >
@@ -37,7 +47,7 @@ export const NewsFeed: React.FC<NewsFeedProps> = ({ news, selectedNews, onSelect
               }`} />
             </div>
             <h4 className={`text-xs leading-snug font-medium mb-2 line-clamp-2 ${
-              selectedNews.id === item.id ? 'text-white' : 'text-text-main'
+              selectedNews?.id === item.id ? 'text-white' : 'text-text-main'
             }`}>
               {item.title}
             </h4>
