@@ -97,33 +97,11 @@ const NewsLab: React.FC = () => {
     };
   };
 
-  // 获取新闻来源列表
+  // 1. 获取初始新闻列表（仅加载一次）
   useEffect(() => {
-    const fetchSources = async () => {
+    const fetchInitialNews = async () => {
       try {
-        const response = await fetch('http://localhost:3000/api/v1/news/sources');
-        const data = await response.json();
-        
-        if (data.code === 200 && data.data && data.data.sources) {
-          const sources = data.data.sources.map((s: any) => s.source);
-          setNewsSources(['ALL', ...sources]);
-          console.log('✅ Loaded', sources.length, 'news sources:', sources);
-        }
-      } catch (err) {
-        console.error("❌ Failed to fetch news sources:", err);
-      }
-    };
-
-    fetchSources();
-  }, []);
-
-  // Fetch initial news
-  useEffect(() => {
-    const fetchNews = async () => {
-      try {
-        // 根据选中的来源筛选
-        const sourceParam = activeSource === 'ALL' ? '' : `&source=${encodeURIComponent(activeSource)}`;
-        const response = await fetch(`http://localhost:3000/api/v1/news?limit=200${sourceParam}`);
+        const response = await fetch('http://localhost:3000/api/v1/news?limit=300');
         const data = await response.json();
         
         if (data.code === 200 && data.data && data.data.items && data.data.items.length > 0) {
@@ -132,24 +110,22 @@ const NewsLab: React.FC = () => {
           if (mapped.length > 0) {
             setNewsList(mapped);
             setSelectedNews(mapped[0]);
-            console.log('✅ Loaded', mapped.length, 'real news items from', activeSource);
+            console.log('✅ Loaded', mapped.length, 'initial news items');
+            
+            // 从新闻列表中提取所有来源
+            const sourcesSet = new Set(mapped.map(n => n.source));
+            setNewsSources(['ALL', ...Array.from(sourcesSet).sort()]);
           }
         }
       } catch (err) {
-        console.error("Failed to fetch news:", err);
-        // 保持使用 mock 数据
+        console.error("❌ Failed to fetch initial news:", err);
       }
     };
 
-    fetchNews();
-    
-    // 每30秒刷新一次新闻
-    const interval = setInterval(fetchNews, 30000);
-    
-    return () => clearInterval(interval);
-  }, [activeSource]); // 当来源改变时重新获取
+    fetchInitialNews();
+  }, []); // 只加载一次
 
-  // WebSocket 实时连接
+  // 2. WebSocket 实时连接 - 接收新增新闻
   useEffect(() => {
     let ws: WebSocket | null = null;
     
@@ -165,15 +141,28 @@ const NewsLab: React.FC = () => {
         ws.onmessage = (event) => {
           try {
             const newsData = JSON.parse(event.data);
-            console.log('📰 New news received:', newsData);
+            console.log('📰 Received realtime news:', newsData.title);
             
             // 将新闻添加到列表顶部
             const newItem = transformNewsItem(newsData);
             if (newItem.title) {
-              setNewsList(prev => [newItem, ...prev].slice(0, 50)); // 保持最多50条
+              setNewsList(prev => {
+                // 去重：检查是否已存在
+                if (prev.some(n => n.id === newItem.id)) {
+                  return prev;
+                }
+                // 添加到顶部，保持最多500条
+                const updated = [newItem, ...prev].slice(0, 500);
+                
+                // 动态更新来源列表
+                const sourcesSet = new Set(updated.map(n => n.source));
+                setNewsSources(['ALL', ...Array.from(sourcesSet).sort()]);
+                
+                return updated;
+              });
             }
           } catch (err) {
-            console.error('Failed to parse WebSocket message:', err);
+            console.error('❌ Failed to parse WebSocket message:', err);
           }
         };
         
@@ -201,16 +190,16 @@ const NewsLab: React.FC = () => {
     };
   }, []);
 
-  // 新增：筛选逻辑
+  // 3. 本地筛选逻辑 - 不再调用后端API
   useEffect(() => {
     let filtered = newsList;
     
-    // 按来源筛选
+    // 按来源筛选（前端本地筛选）
     if (activeSource !== 'ALL') {
       filtered = filtered.filter(news => news.source === activeSource);
     }
     
-    // 按分类筛选（保留原有逻辑）
+    // 按分类筛选
     if (activeFilter !== 'ALL') {
       filtered = filtered.filter(news => {
         switch (activeFilter) {
@@ -231,7 +220,7 @@ const NewsLab: React.FC = () => {
     }
   }, [newsList, activeSource, activeFilter, selectedNews]);
 
-  // 新增：处理新闻点击
+  // 4. 处理新闻点击
   const handleNewsClick = (news: NewsFeedItem) => {
     setSelectedNews(news);
     setShowNewsDetail(true);
